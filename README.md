@@ -26,7 +26,7 @@ It is recommended that you install the Gearman library [through composer](http:/
 ],
 
 // run examples
-Yii::$app->wampRouter->procedure(function(Connection $connection, ClientSession $session) {
+Yii::$app->wampRouter->connect(function(Connection $connection, ClientSession $session) {
     $session->call('com.myapp.add2', [2, 3])
         ->then(function (CallResult $result) use($connection) {
                 echo $result;
