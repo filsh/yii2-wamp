@@ -27,7 +27,7 @@ class WampRouter extends \yii\base\Component
         parent::init();
     }
     
-    public function procedure(\Closure $callback, array $connectionOptions = [])
+    public function connect(\Closure $callback, array $connectionOptions = [])
     {
         if(!$this->enableLogging) {
             Logger::set(new NullLogger());
