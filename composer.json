@@ -1,0 +1,28 @@
+{
+    "name": "filsh/yii2-wamp-router",
+    "description": "Extension for WAMP(Web Application Messaging Protocol)",
+    "keywords": ["yii", "extension", "module"],
+    "homepage": "https://github.com/filsh/yii2-wamp-router",
+    "type": "yii2-extension",
+    "license": "MIT",
+    "support": {
+        "email": "imaliy.filsh@gmail.com",
+        "source": "https://github.com/filsh/yii2-wamp-router"
+    },
+    "authors": [
+        {
+            "name": "Igor Maliy",
+            "email": "imaliy.filsh@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "yiisoft/yii2": "*",
+        "voryx/thruway": "0.3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "filsh\\wamprouter\\": ""
+        }
+    }
+}
