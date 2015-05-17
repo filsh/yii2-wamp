@@ -19,6 +19,8 @@ class WampRouter extends \yii\base\Component
     
     public $enableLogging = true;
     
+    public $enableLoggingOutput = true;
+    
     public function init()
     {
         if(empty($this->host) || empty($this->port) || empty($this->realm)) {
@@ -33,7 +35,9 @@ class WampRouter extends \yii\base\Component
             Logger::set(new NullLogger());
         }
         
-        ob_start();
+        if(!$this->enableLoggingOutput) {
+            ob_start();
+        }
         
         $connection = $this->createConnection($connectionOptions);
         $connection->once('open', function (ClientSession $session) use($callback, $connection) {
@@ -43,8 +47,10 @@ class WampRouter extends \yii\base\Component
         $connection->open();
         
         if($this->enableLogging) {
-            \Yii::info(ob_get_clean());
-        } else {
+            \Yii::info(ob_get_contents());
+        }
+        
+        if(!$this->enableLoggingOutput) {
             ob_clean();
         }
     }
@@ -56,14 +62,14 @@ class WampRouter extends \yii\base\Component
             'url'     => strtr('ws://{host}:{port}', ['{host}' => $this->host, '{port}' => $this->port])
         ]));
         
-        $loop = $connection->getClient()->getLoop();
-        $timer = $loop->addTimer($this->timeuot, function () use ($loop) {
-            $loop->stop();
-        });
-        $connection->once('close', function() use($timer) {
-            $timer->cancel();
-            \Yii::warning('WAMP connection closed by timout.');
-        });
+//        $loop = $connection->getClient()->getLoop();
+//        $timer = $loop->addTimer($this->timeuot, function () use ($loop) {
+//            $loop->stop();
+//        });
+//        $connection->once('close', function() use($timer) {
+//            $timer->cancel();
+//            \Yii::warning('WAMP connection closed by timeout.');
+//        });
         
         return $connection;
     }
