@@ -1,4 +1,4 @@
-# yii2-runner
+# yii2-wamp-router
 
 ## Installation
 
