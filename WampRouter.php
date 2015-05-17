@@ -15,10 +15,6 @@ class WampRouter extends \yii\base\Component
     
     public $realm;
     
-    public $timeuot = 5;
-    
-    public $enableLogging = true;
-    
     public $enableLoggingOutput = true;
     
     public function init()
@@ -29,48 +25,55 @@ class WampRouter extends \yii\base\Component
         parent::init();
     }
     
-    public function connect(\Closure $callback, array $connectionOptions = [])
+    public function connect(\Closure $callback, array $options = [])
     {
-        if(!$this->enableLogging) {
+        $options = array_merge([
+            'logging' => true,
+            'loggingOutput' => false,
+            'connectionTimeout' => null,
+            'connectionOptions' => [],
+        ], $options);
+        
+        if(!$options['logging']) {
             Logger::set(new NullLogger());
         }
         
-        if(!$this->enableLoggingOutput) {
+        if(!$options['loggingOutput']) {
             ob_start();
         }
         
-        $connection = $this->createConnection($connectionOptions);
+        $connection = $this->createConnection($options['connectionOptions']);
         $connection->once('open', function (ClientSession $session) use($callback, $connection) {
             call_user_func_array($callback, [$connection, $session]);
         });
+        
+        if($options['connectionTimeout'] !== null) {
+            $loop = $connection->getClient()->getLoop();
+            $timer = $loop->addTimer($options['connectionTimeout'], function () use ($loop) {
+                $loop->stop();
+            });
+            $connection->once('close', function() use($timer) {
+                $timer->cancel();
+                \Yii::warning('WAMP connection closed by timeout.');
+            });
+        }
 
         $connection->open();
         
-        if($this->enableLogging) {
+        if($options['logging']) {
             \Yii::info(ob_get_contents());
         }
         
-        if(!$this->enableLoggingOutput) {
+        if(!$options['loggingOutput']) {
             ob_clean();
         }
     }
     
     protected function createConnection(array $options = [])
     {
-        $connection = new Connection(array_merge($options, [
+        return new Connection(array_merge($options, [
             'realm'   => $this->realm,
             'url'     => strtr('ws://{host}:{port}', ['{host}' => $this->host, '{port}' => $this->port])
         ]));
-        
-//        $loop = $connection->getClient()->getLoop();
-//        $timer = $loop->addTimer($this->timeuot, function () use ($loop) {
-//            $loop->stop();
-//        });
-//        $connection->once('close', function() use($timer) {
-//            $timer->cancel();
-//            \Yii::warning('WAMP connection closed by timeout.');
-//        });
-        
-        return $connection;
     }
 }
