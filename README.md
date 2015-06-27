@@ -7,7 +7,7 @@ It is recommended that you install the Gearman library [through composer](http:/
 ```json
 {
     "require": {
-       "filsh/yii2-wamp-router": "dev-master"
+       "filsh/yii2-wamp": "dev-master"
     }
 }
 ```
@@ -17,12 +17,19 @@ It is recommended that you install the Gearman library [through composer](http:/
 ```php
 // configure component
 'components' => [
-  'wampRouter' => [
-      'class' => 'filsh\wamprouter\WampRouter',
-      'realm' => 'realm',
-      'host' => '172.17.0.20',
-      'port' => '8000',
-  ]
+    'wampRouter' => [
+        'class' => 'filsh\wamp\components\WampRouter',
+        'realm' => 'realm',
+        'host' => '172.17.0.20',
+        'port' => '8000',
+    ],
+  'wamp' => [
+        'class' => 'filsh\wamp\Module',
+        'wampRouter' => 'wampRouter',
+        'runnerMap' => [
+            ...
+        ]
+    ]
 ],
 
 // run examples
