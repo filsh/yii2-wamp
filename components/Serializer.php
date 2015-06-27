@@ -1,6 +1,6 @@
 <?php
 
-namespace filsh\wamprouter;
+namespace filsh\wamp\components;
 
 class Serializer extends \yii\rest\Serializer
 {

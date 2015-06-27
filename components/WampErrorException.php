@@ -1,10 +1,10 @@
 <?php
 
-namespace filsh\wamprouter;
+namespace filsh\wamp\components;
 
 use Thruway\Message\ErrorMessage;
 
-class WampException extends \yii\base\Exception
+class WampErrorException extends \yii\base\Exception
 {
     public $errorUri;
     

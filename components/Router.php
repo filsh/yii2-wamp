@@ -1,13 +1,13 @@
 <?php
 
-namespace filsh\wamprouter;
+namespace filsh\wamp\components;
 
 use Thruway\Connection;
 use Thruway\ClientSession;
 use Thruway\Logging\Logger;
 use Psr\Log\NullLogger;
 
-class WampRouter extends \yii\base\Component
+class Router extends \yii\base\Component
 {
     public $host;
     

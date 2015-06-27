@@ -1,13 +1,13 @@
 {
-    "name": "filsh/yii2-wamp-router",
+    "name": "filsh/yii2-wamp",
     "description": "Extension for WAMP(Web Application Messaging Protocol)",
-    "keywords": ["yii", "extension", "module"],
-    "homepage": "https://github.com/filsh/yii2-wamp-router",
+    "keywords": ["yii", "module"],
+    "homepage": "https://github.com/filsh/yii2-wamp",
     "type": "yii2-extension",
     "license": "MIT",
     "support": {
         "email": "imaliy.filsh@gmail.com",
-        "source": "https://github.com/filsh/yii2-wamp-router"
+        "source": "https://github.com/filsh/yii2-wamp"
     },
     "authors": [
         {
@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "filsh\\wamprouter\\": ""
+            "filsh\\wamp\\": ""
         }
     }
 }
