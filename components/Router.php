@@ -19,10 +19,6 @@ class Router extends \yii\base\Component
     
     public $loggingOutput = false;
     
-    protected $_connection;
-    
-    protected $_session;
-    
     public function init()
     {
         if(empty($this->host) || empty($this->port) || empty($this->realm)) {
@@ -33,49 +29,45 @@ class Router extends \yii\base\Component
     
     public function connect(\Closure $callback, array $options = [])
     {
-        if($this->_connection !== null) {
-            call_user_func_array($callback, [$this->_connection, $this->_connection->getClient()->getSession()]);
-        } else {
-            $options = array_merge([
-                'logging' => $this->logging,
-                'loggingOutput' => $this->loggingOutput,
-                'connectionTimeout' => null,
-                'connectionOptions' => [],
-            ], $options);
+        $options = array_merge([
+            'logging' => $this->logging,
+            'loggingOutput' => $this->loggingOutput,
+            'connectionTimeout' => null,
+            'connectionOptions' => [],
+        ], $options);
 
-            if(!$options['logging']) {
-                Logger::set(new NullLogger());
-            }
+        if(!$options['logging']) {
+            Logger::set(new NullLogger());
+        }
 
-            if(!$options['loggingOutput']) {
-                ob_start();
-            }
-            
-            $this->_connection = $this->createConnection($options['connectionOptions']);
-            $this->_connection->once('open', function (ClientSession $session) use($callback) {
-                call_user_func_array($callback, [$this->_connection, $session]);
+        if(!$options['loggingOutput']) {
+            ob_start();
+        }
+
+        $connection = $this->createConnection($options['connectionOptions']);
+        $connection->once('open', function (ClientSession $session) use($connection, $callback) {
+            call_user_func_array($callback, [$connection, $session]);
+        });
+
+        if($options['connectionTimeout'] !== null) {
+            $loop = $connection->getClient()->getLoop();
+            $timer = $loop->addTimer($options['connectionTimeout'], function () use ($loop) {
+                $loop->stop();
             });
+            $connection->once('close', function() use($timer) {
+                $timer->cancel();
+                \Yii::warning('WAMP connection closed by timeout.');
+            });
+        }
 
-            if($options['connectionTimeout'] !== null) {
-                $loop = $this->_connection->getClient()->getLoop();
-                $timer = $loop->addTimer($options['connectionTimeout'], function () use ($loop) {
-                    $loop->stop();
-                });
-                $this->_connection->once('close', function() use($timer) {
-                    $timer->cancel();
-                    \Yii::warning('WAMP connection closed by timeout.');
-                });
-            }
+        $connection->open();
 
-            $this->_connection->open();
+        if($options['logging']) {
+            \Yii::info(ob_get_contents());
+        }
 
-            if($options['logging']) {
-                \Yii::info(ob_get_contents());
-            }
-
-            if(!$options['loggingOutput']) {
-                ob_clean();
-            }
+        if(!$options['loggingOutput']) {
+            ob_clean();
         }
     }
     
