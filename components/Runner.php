@@ -15,13 +15,18 @@ abstract class Runner extends \filsh\yii2\runner\BaseRunner
     
     public function run()
     {
-        if(false === $this->beforeRun()) {
-            return false;
+        try {
+            if(false === $this->beforeRun()) {
+                return false;
+            }
+
+            $result = $this->doRun();
+            list($arguments, $argumentsKw) = is_array($result) ? $result : [null, null];
+            $this->afterRun();
+        } catch(\Exception $e) {
+            \Yii::error($e->getMessage());
+            throw $e;
         }
-        
-        $result = $this->doRun();
-        list($arguments, $argumentsKw) = is_array($result) ? $result : [null, null];
-        $this->afterRun();
         
         return new \Thruway\Result($arguments, $this->serializeData($argumentsKw));
     }
