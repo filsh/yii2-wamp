@@ -18,7 +18,8 @@
     "minimum-stability": "dev",
     "require": {
         "yiisoft/yii2": "*",
-        "voryx/thruway": "0.3.*"
+        "voryx/thruway": "0.3.*",
+        "filsh/yii2-runner": "dev-master"
     },
     "autoload": {
         "psr-4": {
