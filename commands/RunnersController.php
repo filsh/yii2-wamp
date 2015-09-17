@@ -13,7 +13,7 @@ class RunnersController extends \yii\console\Controller
     public function actionIndex($app)
     {
         Yii::$app->configManager->rules = [
-            $app => \common\base\rule\DummyRule::class
+            $app => \filsh\config\rule\DummyRule::class
         ];
         
         $this->module->getRouter()->connect(function(Connection $connection, ClientSession $session) {
