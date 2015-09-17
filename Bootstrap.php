@@ -2,7 +2,7 @@
 
 namespace filsh\wamp;
 
-use filsh\wamp\components\Router;
+use filsh\wamp\components\Collection;
 use filsh\yii2\runner\RunnerComponent;
 
 class Bootstrap implements \yii\base\BootstrapInterface
@@ -19,7 +19,7 @@ class Bootstrap implements \yii\base\BootstrapInterface
     {
         /** @var $module Module */
         if ($app->hasModule('wamp') && ($module = $app->getModule('wamp')) instanceof Module) {
-            $module->wampRouter = \yii\di\Instance::ensure($module->wampRouter, Router::class);
+            $module->routerCollection = \yii\di\Instance::ensure($module->routerCollection, Collection::class);
             
             if(!$module->has('runner')) {
                 $this->_runnerMap = array_merge($this->_runnerMap, $module->runnerMap);

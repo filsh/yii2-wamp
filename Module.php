@@ -8,7 +8,7 @@ class Module extends \yii\base\Module
 {
     const VERSION = '0.0.1';
     
-    public $wampRouter;
+    public $routerCollection;
     
     /**
      * @var array Runner's map

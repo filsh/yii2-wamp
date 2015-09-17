@@ -10,9 +10,14 @@ class RunnersController extends \yii\console\Controller
 {
     public $serializer = 'filsh\wamp\components\Serializer';
     
-    public function actionIndex()
+    public function actionIndex($realm)
     {
-        $this->module->wampRouter->connect(function(Connection $connection, ClientSession $session) {
+        $router = $this->module->routerCollection->getRouter($realm);
+        Yii::$app->configManager->rules = [
+            $realm => \common\base\rule\DummyRule::class
+        ];
+        
+        $router->connect(function(Connection $connection, ClientSession $session) {
             $routes = array_keys($this->module->get('runner')->runners);
             
             foreach($routes as $route) {
@@ -21,16 +26,11 @@ class RunnersController extends \yii\console\Controller
                         'args' => $args,
                         'argsKw' => $argsKw
                     ]);
-                    return $this->serializeData($result);
+                    return Yii::createObject($this->serializer)->serialize($result);
                 });
             }
         }, [
             'loggingOutput' => true
         ]);
-    }
-    
-    protected function serializeData($data)
-    {
-        return Yii::createObject($this->serializer)->serialize($data);
     }
 }
